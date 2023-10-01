@@ -483,6 +483,19 @@ sudo chown -R "${USER}" /run/host-services`
 			return errors.Join(unlockErrs...)
 		})
 	}
+	if len(a.y.RawDisks) > 0 {
+		a.onClose = append(a.onClose, func() error {
+			var unlockErrs []error
+			for _, d := range a.y.RawDisks {
+				_, inspectErr := store.InspectDisk(d.Name)
+				if inspectErr != nil {
+					unlockErrs = append(unlockErrs, inspectErr)
+					continue
+				}
+			}
+			return errors.Join(unlockErrs...)
+		})
+	}
 	go a.watchGuestAgentEvents(ctx)
 	if err := a.waitForRequirements("optional", a.optionalRequirements()); err != nil {
 		errs = append(errs, err)

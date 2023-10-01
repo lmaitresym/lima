@@ -477,6 +477,37 @@ func attachDisks(driver *driver.BaseDriver, vmConfig *vz.VirtualMachineConfigura
 		configurations = append(configurations, extraDisk)
 	}
 
+
+	for _, d := range driver.Yaml.RawDisks {
+		diskName := d.Name
+		disk, err := store.InspectDisk(diskName)
+		if err != nil {
+			return fmt.Errorf("failed to run load disk %q: %q", diskName, err)
+		}
+
+		if disk.Instance != "" {
+			return fmt.Errorf("failed to run attach disk %q, in use by instance %q", diskName, disk.Instance)
+		}
+
+		extraDiskPath := filepath.Join(disk.Dir, filenames.DataDisk)
+
+		// ConvertToRaw is a NOP if no conversion is needed
+		logrus.Debugf("Converting extra disk %q to a raw disk (if it is not a raw)", extraDiskPath)
+		if err = nativeimgutil.ConvertToRaw(extraDiskPath, extraDiskPath, nil, true); err != nil {
+			return fmt.Errorf("failed to convert extra disk %q to a raw disk: %w", extraDiskPath, err)
+		}
+
+		extraDiskPathAttachment, err := vz.NewDiskImageStorageDeviceAttachmentWithCacheAndSync(extraDiskPath, false, vz.DiskImageCachingModeAutomatic, vz.DiskImageSynchronizationModeFsync)
+		if err != nil {
+			return fmt.Errorf("failed to create disk attachment for extra disk %q: %w", extraDiskPath, err)
+		}
+		extraDisk, err := vz.NewVirtioBlockDeviceConfiguration(extraDiskPathAttachment)
+		if err != nil {
+			return fmt.Errorf("failed to create new virtio block device config for extra disk %q: %w", extraDiskPath, err)
+		}
+		configurations = append(configurations, extraDisk)
+	}
+
 	if err = validateDiskFormat(ciDataPath); err != nil {
 		return err
 	}

@@ -16,6 +16,7 @@ type LimaYAML struct {
 	Memory             *string         `yaml:"memory,omitempty" json:"memory,omitempty"` // go-units.RAMInBytes
 	Disk               *string         `yaml:"disk,omitempty" json:"disk,omitempty"`     // go-units.RAMInBytes
 	AdditionalDisks    []Disk          `yaml:"additionalDisks,omitempty" json:"additionalDisks,omitempty"`
+	RawDisks           []Disk          `yaml:"rawDisks,omitempty" json:"rawDisks,omitempty"`
 	Mounts             []Mount         `yaml:"mounts,omitempty" json:"mounts,omitempty"`
 	MountType          *MountType      `yaml:"mountType,omitempty" json:"mountType,omitempty"`
 	SSH                SSH             `yaml:"ssh,omitempty" json:"ssh,omitempty"` // REQUIRED (FIXME)

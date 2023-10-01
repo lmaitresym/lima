@@ -281,6 +281,9 @@ func TestFillDefault(t *testing.T) {
 		AdditionalDisks: []Disk{
 			{Name: "data"},
 		},
+		RawDisks: []Disk{
+			{Name: "raw-data"},
+		},
 		GuestInstallPrefix: pointer.String("/opt"),
 		Containerd: Containerd{
 			System: pointer.Bool(true),
@@ -416,7 +419,7 @@ func TestFillDefault(t *testing.T) {
 	y = filledDefaults
 	y.DNS = []net.IP{net.ParseIP("8.8.8.8")}
 	y.AdditionalDisks = []Disk{{Name: "overridden"}}
-
+	y.RawDisks = []Disk{{Name: "overridden"}}
 	expect = y
 
 	expect.Provision = append(y.Provision, d.Provision...)
@@ -425,6 +428,7 @@ func TestFillDefault(t *testing.T) {
 	expect.CopyToHost = append(y.CopyToHost, d.CopyToHost...)
 	expect.Containerd.Archives = append(y.Containerd.Archives, d.Containerd.Archives...)
 	expect.AdditionalDisks = append(y.AdditionalDisks, d.AdditionalDisks...)
+	expect.RawDisks = append(y.RawDisks, d.RawDisks...)
 
 	// Mounts and Networks start with lowest priority first, so higher priority entries can overwrite
 	expect.Mounts = append(d.Mounts, y.Mounts...)
@@ -458,6 +462,9 @@ func TestFillDefault(t *testing.T) {
 		Disk:   pointer.String("117GiB"),
 		AdditionalDisks: []Disk{
 			{Name: "test"},
+		},
+		RawDisks: []Disk{
+			{Name: "raw-test"},
 		},
 		GuestInstallPrefix: pointer.String("/usr"),
 		Containerd: Containerd{
@@ -578,6 +585,7 @@ func TestFillDefault(t *testing.T) {
 	expect.CopyToHost = append(append(o.CopyToHost, y.CopyToHost...), d.CopyToHost...)
 	expect.Containerd.Archives = append(append(o.Containerd.Archives, y.Containerd.Archives...), d.Containerd.Archives...)
 	expect.AdditionalDisks = append(append(o.AdditionalDisks, y.AdditionalDisks...), d.AdditionalDisks...)
+	expect.RawDisks = append(append(o.RawDisks, y.RawDisks...), d.RawDisks...)
 
 	expect.HostResolver.Hosts["default"] = d.HostResolver.Hosts["default"]
 	expect.HostResolver.Hosts["MY.Host"] = d.HostResolver.Hosts["host.lima.internal"]

@@ -243,6 +243,8 @@ func FillDefault(y, d, o *LimaYAML, filePath string) {
 
 	y.AdditionalDisks = append(append(o.AdditionalDisks, y.AdditionalDisks...), d.AdditionalDisks...)
 
+	y.RawDisks = append(append(o.RawDisks, y.RawDisks...), d.RawDisks...)
+
 	if y.Audio.Device == nil {
 		y.Audio.Device = d.Audio.Device
 	}

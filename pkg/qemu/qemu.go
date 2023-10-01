@@ -609,7 +609,23 @@ func Cmdline(cfg Config) (string, []string, error) {
 			extraDisks = append(extraDisks, dataDisk)
 		}
 	}
+	if len(y.RawDisks) > 0 {
+		for _, d := range y.RawDisks {
+			diskName := d.Name
+			disk, err := store.InspectDisk(diskName)
+			if err != nil {
+				logrus.Errorf("could not load disk %q: %q", diskName, err)
+				return "", nil, err
+			}
 
+			if disk.Instance != "" {
+				logrus.Errorf("could not attach disk %q, in use by instance %q", diskName, disk.Instance)
+				return "", nil, err
+			}
+			dataDisk := filepath.Join(disk.Dir, filenames.DataDisk)
+			extraDisks = append(extraDisks, dataDisk)
+		}
+	}
 	isBaseDiskCDROM, err := iso9660util.IsISO9660(baseDisk)
 	if err != nil {
 		return "", nil, err

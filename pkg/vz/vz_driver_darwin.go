@@ -71,6 +71,7 @@ func (l *LimaVzDriver) Validate() error {
 		"CACertificates",
 		"Rosetta",
 		"AdditionalDisks",
+		"RawDisks",
 		"Audio",
 		"Video",
 		"OS",

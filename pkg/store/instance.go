@@ -47,6 +47,7 @@ type Instance struct {
 	Disk            int64              `json:"disk,omitempty"`   // bytes
 	Message         string             `json:"message,omitempty"`
 	AdditionalDisks []limayaml.Disk    `json:"additionalDisks,omitempty"`
+	RawDisks        []limayaml.Disk    `json:"rawDisks,omitempty"`
 	Networks        []limayaml.Network `json:"network,omitempty"`
 	SSHLocalPort    int                `json:"sshLocalPort,omitempty"`
 	SSHConfigFile   string             `json:"sshConfigFile,omitempty"`
@@ -130,6 +131,7 @@ func Inspect(instName string) (*Instance, error) {
 		inst.Disk = disk
 	}
 	inst.AdditionalDisks = y.AdditionalDisks
+	inst.RawDisks = y.RawDisks
 	inst.Networks = y.Networks
 
 	// 0 out values since not configurable on WSL2
